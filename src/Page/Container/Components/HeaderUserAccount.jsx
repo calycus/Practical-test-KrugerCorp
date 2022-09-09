@@ -1,10 +1,10 @@
 import { Button, Avatar, Collapse, IconButton } from "@mui/material";
 import { ChevronLeft } from '@mui/icons-material';
 import React from "react";
-const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme }) => {
+const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme, rol }) => {
     return (
         <React.Fragment>
-            <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "column", width: "40%", cursor:"pointer"}}>
                 <div className='drawerHeaderContainer'>
                     <div style={{ display: "flex", alignItems: "center" }} onClick={() => setOpenUser(!openUser)}>
                         <div>
@@ -12,12 +12,12 @@ const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme }) => {
                         </div>
                         <div className='drawerHeaderUserDataAcount'>
                             <span className='userHeaderAccount'>Kruger Corp.</span>
-                            <span className='userHeaderName'>//. Administrador</span>
+                            <span className='userHeaderName'>//. {rol}</span>
                         </div>
                     </div>
                     <div style={{ display: "flex", justifyContent: "end" }}>
                         <IconButton onClick={() => setOpen(false)}>
-                            <ChevronLeft />
+                            <ChevronLeft color="neutral"/>
                         </IconButton>
                     </div>
                 </div>
@@ -32,7 +32,7 @@ const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme }) => {
                         <Button
                             className="logoutButton"
                             variant="outlined"
-                            color="loginButton"
+                            color="neutral"
                         >
                             Cerrar Sesion
                         </Button>

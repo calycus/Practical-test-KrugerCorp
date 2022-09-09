@@ -11,11 +11,11 @@ export const setInfo = createSlice({
         setRolUser: (state, action) => {
             console.log(action.payload)
             state.rol = ""
-            state.rol = action.payload.rol
-            localStorage.setItem('rol', action.payload.rol)
+            state.rol = action.payload
+            localStorage.setItem('rol', action.payload)
 
-            if (state.rol != "") {
-                window.location.pathname="/index"
+            if (state.rol !== "") {
+                window.location.pathname = "/index"
             }
         },
     }

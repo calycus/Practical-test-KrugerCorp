@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { Provider } from 'react-redux';
 
 
-import PageContainer from './Page/Container/PageContainer';
+import PageContainer from './Page/Container/pageContainer';
 import store from './Redux/store'
 import './index.css';
 
@@ -15,7 +15,7 @@ const theme = createTheme({
       main: 'rgb(26 41 124)',
     },
     secondary: {
-      main: 'rgb(28 37 87)',
+      main: '#ff471b',
     },
     background: {
       main: '#ededed'
@@ -23,8 +23,8 @@ const theme = createTheme({
     logo: {
       main: 'rgb(255 71 27);',
     },
-    negative: {
-      main: '#C10015',
+    neutral: {
+      main: 'rgb(255, 255, 255);',
     },
   },
 });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box } from '@mui/material';
 
-import './HomePage.css';
+import './homePage.css';
 import CardRolOption from './Components/CardRolOption';
 
 const roles = [{ rol: "Administador", id: 1 }, { rol: "Empleado", id: 2 }]

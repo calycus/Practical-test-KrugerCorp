@@ -8,7 +8,7 @@
 
 .headerDivContainer {
     display: flex;
-    width: 100%;
+    width: 40%;
     justify-content: end;
 }
 
@@ -21,7 +21,7 @@
 .drawerHeaderContainer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content:flex-end;
     width: 100%;
     -webkit-transition: none !important;
     transition: none !important;
@@ -30,21 +30,15 @@
 .userHeaderAccount {
     font-size: 20px;
     font-weight: 700;
-    color: rgb(26 41 124);
+    color: rgb(255, 255, 255);
 }
 
 .userHeaderName {
     font-size: 10px;
     padding-left: .2rem;
-    color: rgb(26 41 124);
+    color: rgb(255, 255, 255);
 }
 
-/* .CollapseHeder {
-    height: auto !important;
-    overflow: visible !important;
-    -webkit-transition: height 3000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important;
-    transition: height 3000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important;
-} */
 
 .logoutButtonContainer {
     display: flex;
@@ -57,11 +51,13 @@
     font-weight: bold !important;
 }
 
-/* .css-2pabll-MuiDrawer-docked .css-1r9jet7 {
-    -webkit-transition: none !important;
-    transition: none !important;
-} */
-
+.boxPageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
 
 @media (max-height: 900px) {
     .css-1sywsns {
