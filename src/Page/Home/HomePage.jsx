@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Box } from '@mui/material';
 
 import './homePage.css';
-import CardRolOption from './Components/CardRolOption';
-
+/* import CardRolOption from './Components/CardRolOption'; */
+import Login from './Components/Login';
 const roles = [{ rol: "Administador", id: 1 }, { rol: "Empleado", id: 2 }]
 
 
@@ -33,18 +33,7 @@ const HomePage = () => {
                     <div className="background-img-R">
                         <div className='cardRolContainer'>
                             <span className='textRightpan'>What is your role?</span>
-                            {
-                                roles.map((elemento, index) => {
-                                    return (
-                                        <div key={index} style={{ paddingBottom: "1rem" }}>
-                                            <CardRolOption
-                                                rol={elemento.rol}
-                                                id={elemento.id}
-                                            />
-                                        </div>
-                                    )
-                                })
-                            }
+                            <Login />
 
                         </div>
                     </div>

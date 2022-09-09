@@ -1,0 +1,23 @@
+.imgContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.imgDialogContent {
+    border-right: ridge;
+    border-left: ridge;
+    border-radius: 10px;
+}
+
+.imputDialogContent {
+    display: flex;
+}
+
+.css-f1uni6-MuiFormLabel-root-MuiInputLabel-root {
+    top: -10px !important;
+}
+
+.css-1t1j96h-MuiPaper-root-MuiDialog-paper{
+    max-width: 750px !important;
+}

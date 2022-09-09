@@ -1,11 +1,12 @@
-/* 
+
 import { createSlice } from "@reduxjs/toolkit";
 
 export const getInfo = createSlice({
-    name: 'rolUserData',
+    name: 'employee',
     initialState: {
         rol: localStorage.getItem('rol') || "",
-        Employee: {
+        data: [],
+       /*  Employee: {
             firstName: localStorage.getItem('employee_name') || "",
             lastName: localStorage.getItem('employee_name') || "",
             dni: localStorage.getItem('employee_name') || "",
@@ -13,7 +14,7 @@ export const getInfo = createSlice({
             mail: localStorage.getItem('employee_name') || "",
             mail: localStorage.getItem('employee_name') || "",
             mail: localStorage.getItem('employee_name') || "",
-        }
+        } */
     },
 
     reducers: {
@@ -30,6 +31,6 @@ export const getInfo = createSlice({
 
 
 export const { setNewEmployee, sgetNewEmployee } = getInfo.actions;
-export const selectUserRol = (state) => state.rolUserData.rol;
+/* export const selectUserRol = (state) => state.rolUserData.rol; */
+export const selectEmployee = (state) => state.employee.data;
 export default getInfo.reducer;
- */
