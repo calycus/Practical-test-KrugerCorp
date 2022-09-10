@@ -1,7 +1,7 @@
 import { Button, Avatar, Collapse, IconButton } from "@mui/material";
 import { ChevronLeft } from '@mui/icons-material';
 import React from "react";
-const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme, rol }) => {
+const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme, userData }) => {
     return (
         <React.Fragment>
             <div style={{ display: "flex", flexDirection: "column", width: "40%", cursor:"pointer"}}>
@@ -12,7 +12,7 @@ const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme, rol }) => {
                         </div>
                         <div className='drawerHeaderUserDataAcount'>
                             <span className='userHeaderAccount'>Kruger Corp.</span>
-                            <span className='userHeaderName'>//. {rol}</span>
+                            <span className='userHeaderName'>//. {userData.rol}</span>
                         </div>
                     </div>
                     <div style={{ display: "flex", justifyContent: "end" }}>

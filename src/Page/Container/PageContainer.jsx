@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import RotuerSwitchComponent from '../../Router/routerSwitchComponent'
 import AppBarPageContainer from './Components/AppBarPageContainer';
 import DrawerHeaderComponent from './Components/DrawerHeaderComponent';
-import { selectUserRol } from '../../Redux/StoreComponents/roleSelection';
+import { selectLoginData } from '../../Redux/StoreComponents/login';
 //Css
 import './pageContainer.css'
 
@@ -18,7 +18,7 @@ import './pageContainer.css'
 const PageContainer = () => {
     const theme = useTheme();
     const location = useLocation();
-    const rol = useSelector(selectUserRol)
+    const userData = useSelector(selectLoginData);
     const DrawerHeader = DrawerHeaderComponent()
     const [open, setOpen] = useState(false);
     const [openUser, setOpenUser] = useState(true);
@@ -41,7 +41,7 @@ const PageContainer = () => {
                     setOpen={setOpen}
                     setOpenUser={setOpenUser}
                     openUser={openUser}
-                    rol={rol}
+                    userData={userData[0]}
                 />
             </div>
             <Box component="main"

@@ -1,11 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, CardContent, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, TextField } from '@mui/material';
-
+import { Card, CardContent, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, TextField, Button } from '@mui/material';
+import { Edit } from '@mui/icons-material';
 
 //Dependencias
-import { selectEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
+import { selectEmployee, setDataEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
+import { selectLoginData } from '../../../Redux/StoreComponents/login';
+import EmployeedFrom from './employeedFrom';
+import CardError from '../cardError';
 import "./crudAdministrador.css"
 
 
@@ -13,14 +16,28 @@ let viewRowsTable = [];
 
 export default function SubjectDataTable() {
     viewRowsTable = useSelector(selectEmployee)
+    const userData = useSelector(selectLoginData);
 
     const dispatch = useDispatch();
     const [RowsTable, setRows] = useState([])
     const [Search, setSearch] = useState(false)
-    const [checked, setChecked] = useState(-1);
+    const [open, setOpen] = useState(false);
+    const [update, setUpdate] = useState(0);
+    const [fromError, setFromError] = useState(false);
 
-    const handleSelects = (data) => {
+    const handleClose = () => {
+        setOpen(false);
+    };
 
+    const handleCardError = (data) => {
+        setFromError(data);
+    };
+
+
+    const handleDataUpdate = (data) => {
+        dispatch(setDataEmployee(data))
+        setUpdate(1)
+        setOpen(true)
     }
 
     const requestSearch = (searchedVal) => {
@@ -28,30 +45,33 @@ export default function SubjectDataTable() {
             setSearch(false)
             return
         }
-         const filteredRows = viewRowsTable.filter((row) => {
-             return row.materia.toLowerCase().includes(searchedVal.toLowerCase());
-         });
-         setRows(filteredRows)
+        const filteredRows = viewRowsTable.filter((row) => {
+            return row.cedula.toLowerCase().includes(searchedVal.toLowerCase());
+        });
+        setRows(filteredRows)
         setSearch(true)
+
     };
 
-    const isDisabled = (data) => {
-        setChecked(data);
-    };
 
     return (
-        <Card className='cardEmpleado'>
+        <Card className='cardCrudEmpleado'>
             {
-                (viewRowsTable.length === 0)
+                (viewRowsTable.length !== 0)
                     ?
                     <CustomTable
                         Search={Search}
                         requestSearch={requestSearch}
                         viewRowsTable={viewRowsTable}
                         RowsTable={RowsTable}
-                        checked={checked}
-                        handleSelects={handleSelects}
-                        isDisabled={isDisabled}
+                        handleDataUpdate={handleDataUpdate}
+                        open={open}
+                        update={update}
+                        setOpen={setOpen}
+                        handleClose={handleClose}
+                        userData={userData}
+                        handleCardError={handleCardError}
+                        fromError={fromError}
                     />
                     :
                     (<div><span>No Existen Empleados Registrados</span></div>)
@@ -60,7 +80,10 @@ export default function SubjectDataTable() {
     )
 }
 
-const CustomTable = ({ Search, requestSearch, viewRowsTable, RowsTable, checked, handleSelects, isDisabled }) => {
+const CustomTable = (
+    { Search, requestSearch, viewRowsTable, RowsTable, handleDataUpdate,
+        open, update, setOpen, handleClose, userData, handleCardError, fromError }
+) => {
     return (
         <CardContent className='cardContentEmpleado'>
             <TableContainer component={Paper}>
@@ -78,16 +101,18 @@ const CustomTable = ({ Search, requestSearch, viewRowsTable, RowsTable, checked,
                         variant="standard"
                         onChange={(e) => requestSearch(e.target.value)} />
                 </Box>
-                <Table sx={{ minWidth: 500 }} aria-label="simple table">
+                <Table sx={{ minWidth: 600 }} aria-label="simple table">
                     <TableHead style={{ display: "flex", paddingTop: "1.5rem" }}>
                         <TableRow
-                            style={{ width: '100%', display: 'flex', /* gridTemplateColumns: '3rem auto 7rem 2rem' */ }}>
-                            <TableCell style={{ width: "20%", content: " " }}></TableCell>
-                            <TableCell style={{ width: "100%" }}/* className='rowTableMateria' */>Cedula</TableCell>
-                            <TableCell style={{ width: "100%" }}/* className='rowTable' */ >Nombre</TableCell>
-                            <TableCell style={{ width: "100%" }}/* className='rowTable' */ >Apellido</TableCell>
-                            <TableCell style={{ width: "100%" }}/* className='rowTable' */ >Correo</TableCell>
-                            <TableCell style={{ width: "20%", content: " " }}></TableCell>
+                            style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)' }}>
+                            <TableCell className='tableGrid'>Cedula</TableCell>
+                            <TableCell className='tableGrid'>Nombre</TableCell>
+                            <TableCell className='tableGrid'>Apellido</TableCell>
+                            <TableCell className='tableGrid' style={{ display: "flex" }}>Correo</TableCell>
+                            <TableCell className='tableGrid'>Estado</TableCell>
+                            <TableCell className='tableGrid'>Vacuna</TableCell>
+                            <TableCell className='tableGrid'>F. Vacunacion</TableCell>
+                            <TableCell className='tableGrid'></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody style={{ display: 'flex', flexDirection: 'column', overflow: 'auto', maxHeight: '350px' }}>
@@ -95,48 +120,53 @@ const CustomTable = ({ Search, requestSearch, viewRowsTable, RowsTable, checked,
                             viewRowsTable.map((row, index) => (
                                 <Fila
                                     key={index}
-                                    index={index}
                                     row={row}
-                                    checked={checked}
-                                    handleSelects={handleSelects}
-                                    isDisabled={isDisabled}
+                                    handleDataUpdate={handleDataUpdate}
                                 />
                             ))
                             : RowsTable.map((row, index) => (
                                 <Fila
                                     key={index}
-                                    index={index}
                                     row={row}
-                                    checked={checked}
-                                    handleSelects={handleSelects}
-                                    isDisabled={isDisabled}
+                                    handleDataUpdate={handleDataUpdate}
                                 />
                             ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-        </CardContent>
+            <EmployeedFrom
+                open={open}
+                update={update}
+                setOpen={setOpen}
+                handleClose={handleClose}
+                userData={userData[0]}
+                handleCardError={handleCardError}
+            />
+            <CardError
+                fromError={fromError}
+                handleCardError={handleCardError}
+            />
+        </CardContent >
     )
 }
 
-const Fila = ({ row, handleSelects, isDisabled, index, checked }) => {
+const Fila = ({ row, handleDataUpdate }) => {
     return (
         <TableRow
-            style={{ display: 'grid', gridTemplateColumns: '3rem auto 7rem 1rem', alignItems: 'center' }}
+            style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', /* alignItems: 'center' */ }}
         >
-            <TableCell className='rowTable' style={{ textAlign: 'center' }}>
-                <Checkbox
-                    color="success"
-                    checked={checked == index}
-                    onChange={(e) => isDisabled(e.target.value)}
-                    onClick={() => handleSelects(row)}
-                    value={index}
-                />
+            <TableCell className='tableGrid'>{row.cedula}</TableCell>
+            <TableCell className='tableGrid'>{row.nombre}</TableCell>
+            <TableCell className='tableGrid'>{row.apellido}</TableCell>
+            <TableCell className='tableGrid'>{row.correo}</TableCell>
+            <TableCell className='tableGrid'>{(row.estadoVacunacion === "") ? "N/A" : row.estadoVacunacion}</TableCell>
+            <TableCell className='tableGrid'>{(row.tipoDeVacuna === "") ? "N/A" : row.tipoDeVacuna}</TableCell>
+            <TableCell className='tableGrid'>N/A</TableCell>
+            <TableCell className='tableGrid'>
+                <Button onClick={() => handleDataUpdate(row)}>
+                    <Edit />
+                </Button>
             </TableCell>
-            <TableCell className='rowTableMateria' >{row.cedula}</TableCell>
-            <TableCell className='rowTable' >{row.nombre}</TableCell>
-            <TableCell className='rowTable' >{row.apellido}</TableCell>
-            <TableCell className='rowTable' >{row.correo}</TableCell>
         </TableRow>
     )
 }

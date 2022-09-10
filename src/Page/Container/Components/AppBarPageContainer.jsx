@@ -5,9 +5,9 @@ import { IconButton, Toolbar, Typography } from "@mui/material";
 import { styled, useTheme } from '@mui/material/styles';
 import HeaderUserAccount from './HeaderUserAccount';
 
-const drawerWidth = 240;
+/* const drawerWidth = 240; */
 
-const AppBarPageContainer = ({ open, setOpen, setOpenUser, openUser, rol }) => {
+const AppBarPageContainer = ({ open, setOpen, setOpenUser, openUser, userData }) => {
     const theme = useTheme();
     return (
         <React.Fragment>
@@ -46,7 +46,7 @@ const AppBarPageContainer = ({ open, setOpen, setOpenUser, openUser, rol }) => {
                                     openUser={openUser}
                                     setOpen={setOpen}
                                     theme={theme}
-                                    rol={rol}
+                                    userData={userData}
                                 />
                                 : <></>
                         )

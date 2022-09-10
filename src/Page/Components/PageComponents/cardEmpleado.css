@@ -5,6 +5,13 @@
     border-bottom: ridge;
     border-radius: 10px;
 }
+.cardCrudEmpleado {
+    min-width: 50rem;
+    min-height: 28rem;
+    border-right: ridge;
+    border-bottom: ridge;
+    border-radius: 10px;
+}
 
 .cardContentEmpleado {
     display: flex;
