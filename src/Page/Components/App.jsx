@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Fab, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText,
+    Fab, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Slide,
 } from '@mui/material';
 import { Add, Edit } from '@mui/icons-material/';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,17 +18,12 @@ const Index = () => {
     const dispatch = useDispatch()
     const [open, setOpen] = useState(false);
     const [update, setUpdate] = useState(0);
-    const [fromError, setFromError] = useState(false);
+    const [controler, setControler] = useState(false);
 
     const handleClose = () => {
         setOpen(false);
+        setControler(false)
     };
-
-    const handleCardError = (data) => {
-        setFromError(data);
-    };
-
-
 
     useEffect(() => {
         (open === true) ? dispatch(getDataVacunas()) : <></>
@@ -41,20 +36,22 @@ const Index = () => {
             <div /* style={{ maxWidth: "60%" }} */>
                 {(userData[0].id_rol === 1) ? <CrudAdmin /> : <CardEmpleado />}
             </div>
-            <div style={{ display: "flex", justifyContent: "flex-end", margin: "0rem 5rem 0rem 0rem", width: "100%" }}>
-                <Fab color="secondary" onClick={() => setOpen(true)}>
+            <div style={{ display: "flex", justifyContent: "flex-end", margin: "0.5rem 3rem 0rem 0rem", width: "100%" }}>
+                <Fab color="secondary" onClick={() => {
+                    setOpen(true)
+                    setUpdate(0)
+                    setControler(true)
+                }}>
                     {(userData[0].id_rol === 1) ? <Add /> : <Edit />}
                 </Fab>
             </div>
-
-            <EmployeedFrom
-                open={open}
-                update={update}
-                setOpen={setOpen}
-                handleClose={handleClose}
-                userData={userData[0]}
-            />
-            
+                <EmployeedFrom
+                    open={open}
+                    handleClose={handleClose}
+                    update={update}
+                    userData={userData[0]}
+                    controler={controler}
+                />
         </div>
     )
 }

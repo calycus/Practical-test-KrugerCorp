@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, CardContent, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, TextField, Button } from '@mui/material';
+import { Card, CardContent, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, TextField, Button } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 
 //Dependencias
 import { selectEmployee, setDataEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
 import { selectLoginData } from '../../../Redux/StoreComponents/login';
+import { getDataVacunas } from '../../../Redux/StoreComponents/storeTipoDeVacunas';
 import EmployeedFrom from './employeedFrom';
-import CardError from '../cardError';
 import "./crudAdministrador.css"
 
 
@@ -27,6 +27,7 @@ export default function SubjectDataTable() {
 
     const handleClose = () => {
         setOpen(false);
+        setUpdate(0)
     };
 
     const handleCardError = (data) => {
@@ -53,6 +54,10 @@ export default function SubjectDataTable() {
 
     };
 
+    useEffect(() => {
+        (open === true) ? dispatch(getDataVacunas()) : <></>
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open]);
 
     return (
         <Card className='cardCrudEmpleado'>
@@ -67,11 +72,9 @@ export default function SubjectDataTable() {
                         handleDataUpdate={handleDataUpdate}
                         open={open}
                         update={update}
-                        setOpen={setOpen}
                         handleClose={handleClose}
                         userData={userData}
                         handleCardError={handleCardError}
-                        fromError={fromError}
                     />
                     :
                     (<div><span>No Existen Empleados Registrados</span></div>)
@@ -82,7 +85,7 @@ export default function SubjectDataTable() {
 
 const CustomTable = (
     { Search, requestSearch, viewRowsTable, RowsTable, handleDataUpdate,
-        open, update, setOpen, handleClose, userData, handleCardError, fromError }
+        open, update, handleClose, userData }
 ) => {
     return (
         <CardContent className='cardContentEmpleado'>
@@ -104,7 +107,7 @@ const CustomTable = (
                 <Table sx={{ minWidth: 600 }} aria-label="simple table">
                     <TableHead style={{ display: "flex", paddingTop: "1.5rem" }}>
                         <TableRow
-                            style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)' }}>
+                            style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)' }}>
                             <TableCell className='tableGrid'>Cedula</TableCell>
                             <TableCell className='tableGrid'>Nombre</TableCell>
                             <TableCell className='tableGrid'>Apellido</TableCell>
@@ -112,6 +115,7 @@ const CustomTable = (
                             <TableCell className='tableGrid'>Estado</TableCell>
                             <TableCell className='tableGrid'>Vacuna</TableCell>
                             <TableCell className='tableGrid'>F. Vacunacion</TableCell>
+                            <TableCell className='tableGrid'>Contraceña</TableCell>
                             <TableCell className='tableGrid'></TableCell>
                         </TableRow>
                     </TableHead>
@@ -134,18 +138,14 @@ const CustomTable = (
                     </TableBody>
                 </Table>
             </TableContainer>
+
             <EmployeedFrom
                 open={open}
-                update={update}
-                setOpen={setOpen}
                 handleClose={handleClose}
+                update={update}
                 userData={userData[0]}
-                handleCardError={handleCardError}
             />
-            <CardError
-                fromError={fromError}
-                handleCardError={handleCardError}
-            />
+
         </CardContent >
     )
 }
@@ -153,7 +153,7 @@ const CustomTable = (
 const Fila = ({ row, handleDataUpdate }) => {
     return (
         <TableRow
-            style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', /* alignItems: 'center' */ }}
+            style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', /* alignItems: 'center' */ }}
         >
             <TableCell className='tableGrid'>{row.cedula}</TableCell>
             <TableCell className='tableGrid'>{row.nombre}</TableCell>
@@ -162,6 +162,7 @@ const Fila = ({ row, handleDataUpdate }) => {
             <TableCell className='tableGrid'>{(row.estadoVacunacion === "") ? "N/A" : row.estadoVacunacion}</TableCell>
             <TableCell className='tableGrid'>{(row.tipoDeVacuna === "") ? "N/A" : row.tipoDeVacuna}</TableCell>
             <TableCell className='tableGrid'>N/A</TableCell>
+            <TableCell className='tableGrid'>{row.password}</TableCell>
             <TableCell className='tableGrid'>
                 <Button onClick={() => handleDataUpdate(row)}>
                     <Edit />
@@ -170,3 +171,5 @@ const Fila = ({ row, handleDataUpdate }) => {
         </TableRow>
     )
 }
+
+

@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Provider } from 'react-redux';
 
 
@@ -31,13 +33,16 @@ const theme = createTheme({
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <ThemeProvider theme={theme}>
-    <Provider store={store}>
-      <BrowserRouter>
 
-        <PageContainer />
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <BrowserRouter>
 
-      </BrowserRouter>
-    </Provider>
-  </ThemeProvider>
+          <PageContainer />
+
+        </BrowserRouter>
+      </Provider>
+    </ThemeProvider>
+  </LocalizationProvider>
 );

@@ -12,18 +12,20 @@ export const getInfo = createSlice({
             estadoVacunacion: "",
             correo: "",
             fechaNacimiento: "",
-            edad: "",
+            edad: 0,
             direccion: "",
             telefono: "",
             tipoDeVacuna: "",
             dosisNumero: 0,
             fechaDeVacunacion: "",
+            password:""
         }
     },
 
     reducers: {
-        setUpdateEmployee: (state, action) => {
-            let empleados = localStorage.getItem('Employees') || ""
+        setAddEmployee: (state, action) => {
+            console.log(action.payload);
+           /*  let empleados = localStorage.getItem('Employees') || ""
             if (empleados === "") {
                 localStorage.setItem('Employees', '[]')
                 empleados = '[]'
@@ -32,7 +34,32 @@ export const getInfo = createSlice({
 
             empleadosArray.push(action.payload)
             state.data = empleadosArray
-            localStorage.setItem('Employees', JSON.stringify(empleadosArray))
+            localStorage.setItem('Employees', JSON.stringify(empleadosArray)) */
+        },
+
+        setUpdateEmployee: (state, action) => {
+            let empleados = JSON.parse(localStorage.getItem('Employees'))
+
+            let updateEmpleado = action.payload
+
+            empleados.map(empleado => {
+                if (empleado.cedula === updateEmpleado.cedula) {
+                    empleado.nombre = updateEmpleado.nombre
+                    empleado.apellido = updateEmpleado.apellido
+                    empleado.estadoVacunacion = updateEmpleado.estadoVacunacion
+                    empleado.correo = updateEmpleado.correo
+                    empleado.fechaNacimiento = updateEmpleado.fechaNacimiento
+                    empleado.edad = updateEmpleado.edad
+                    empleado.direccion = updateEmpleado.direccion
+                    empleado.telefono = updateEmpleado.telefono
+                    empleado.tipoDeVacuna = updateEmpleado.tipoDeVacuna
+                    empleado.dosisNumero = updateEmpleado.dosisNumero
+                    empleado.fechaDeVacunacion = updateEmpleado.fechaDeVacunacion
+                }
+            });
+            state.data = empleados
+            localStorage.setItem('Employees', '[]')
+            localStorage.setItem('Employees', JSON.stringify(empleados))
         },
 
         setDataEmployee: (state, action) => {
@@ -41,17 +68,12 @@ export const getInfo = createSlice({
             state.dataDataEmployee = action.payload
         },
 
-        /* setUpdateDataForm: (state, action) => {
-
-            state.dataDataEmployee = action.payload
-        },
- */
     }
 })
 
 
 
-export const { setUpdateEmployee, setDataEmployee } = getInfo.actions;
+export const { setAddEmployee, setUpdateEmployee, setDataEmployee } = getInfo.actions;
 export const selectEmployee = (state) => state.employee.data;
 export const selectDataEmployee = (state) => state.employee.dataDataEmployee;
 export default getInfo.reducer;

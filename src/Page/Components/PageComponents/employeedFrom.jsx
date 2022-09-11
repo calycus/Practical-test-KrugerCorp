@@ -1,145 +1,206 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
-  Divider, FormControl, InputLabel, MenuItem, Select, Slide, TextField
+  Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle,
+  Divider, Fade, FormControl, InputLabel, MenuItem, Select, Slide, TextField
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useDispatch, useSelector } from 'react-redux';
+import { Add } from '@mui/icons-material';
 
 import { selectVacunas } from '../../../Redux/StoreComponents/storeTipoDeVacunas';
-import { setUpdateEmployee, selectDataEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
+import { setAddEmployee, setUpdateEmployee, selectDataEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
 
 import "./employeedFrom.css"
 let vacunas = [];
 
-const EmployeedFrom = ({ open, update, handleClose, userData, handleCardError }) => {
+const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
   const dispatch = useDispatch();
   vacunas = useSelector(selectVacunas);
-  const userEmployeed = useSelector(selectDataEmployee)
-  console.log(userEmployeed);
+  const userEmployeed = useSelector(selectDataEmployee);
 
-  const [cedula, setCedula] = useState('');
-  const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
-  const [estadoVacunacion, setEstadoVacunacion] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [edad, setEdad] = useState(0);
-  const [direccion, setDireccion] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [tipoDeVacuna, setTipoDeVacuna] = useState('');
-  const [dosisNumero, setDosisNumero] = useState(0);
-  const [fechaDeVacunacion, setFechaDeVacunacion] = useState([]);
-
-
-
-  const [nombreError, setNombreError] = useState(false);
-  const [apellidoError, setApellidoError] = useState(false);
-  const [estadoVacunacionError, setEstadoVacunacionError] = useState(false);
-  const [correoError, setCorreoError] = useState(false);
-  const [fechaNacimientoError, setFechaNacimientoError] = useState(false);
-  const [edadError, setEdadError] = useState(false);
-  const [direccionError, setDireccionError] = useState(false);
-  const [telefonoError, setTelefonoError] = useState(false);
-  const [tipoDeVacunaError, setTipoDeVacunaError] = useState(false);
-  const [dosisNumeroError, setDosisNumeroError] = useState(false);
-  const [fechaDeVacunacionError, setFechaDeVacunacionError] = useState(false);
-
-
-  /* dispatch(setUpdateDataForm("name", "value")) */
-
-  const handleSetDataEmployeed = () => {
-    let dataEmployeed = {
-      cedula: cedula,
-      nombre: nombre,
-      apellido: apellido,
-      estadoVacunacion: estadoVacunacion,
-      correo: correo,
-      fechaNacimiento: fechaNacimiento,
-      edad: edad,
-      direccion: direccion,
-      telefono: telefono,
-      tipoDeVacuna: tipoDeVacuna,
-      dosisNumero: dosisNumero,
-      fechaDeVacunacion: fechaDeVacunacion,
+  const [openControler, setOpenControler] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [dataEmployeed, setDataEmployeed] = useState(
+    {
+      cedula: "",
+      nombre: "",
+      apellido: "",
+      estadoVacunacion: "",
+      correo: "",
+      fechaNacimiento: "",
+      edad: 0,
+      direccion: "",
+      telefono: "",
+      tipoDeVacuna: "",
+      dosisNumero: 0,
+      fechaDeVacunacion: [],
+      password: ""
     }
+  )
+  const [ErrorDataEmployeed, setErrorDataEmployeed] = useState(
+    {
+      cedulaError: false,
+      nombreError: false,
+      apellidoError: false,
+      estadoVacunacionError: false,
+      correoError: false,
+      fechaNacimientoError: false,
+      edadError: false,
+      direccionError: false,
+      telefonoError: false,
+      tipoDeVacunaError: false,
+      dosisNumeroError: false,
+      fechaDeVacunacionError: false,
+    }
+  )
 
 
+  const formValidation = () => {
+    let regexEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    let regexNombreApellido = /^[a-zA-Z][a-zA-Z]*(?:\s+[a-zA-Z][a-zA-Z]+)?$/;
 
-    if (userData.id_rol === 1) {
+    setErrorDataEmployeed({
+      ...ErrorDataEmployeed,
+      cedulaError: (dataEmployeed.cedula.length < 10) ? true : false,
+      nombreError: (dataEmployeed.nombre.length === 0 || !regexNombreApellido.test(dataEmployeed.nombre)) ? true : false,
+      apellidoError: (dataEmployeed.apellido.length === 0 || !regexNombreApellido.test(dataEmployeed.apellido)) ? true : false,
+      estadoVacunacionError: (dataEmployeed.estadoVacunacion.length === 0) ? true : false,
+      correoError: (dataEmployeed.correo.length === 0 || !regexEmail.test(dataEmployeed.correo)) ? true : false,
+      fechaNacimientoError: (dataEmployeed.fechaNacimiento.length === 0) ? true : false,
+      edadError: (dataEmployeed.edad <= 0) ? true : false,
+      direccionError: (dataEmployeed.direccion.length === 0) ? true : false,
+      telefonoError: (dataEmployeed.telefono.length === 0) ? true : false,
+      tipoDeVacunaError: (dataEmployeed.tipoDeVacuna.length === 0) ? true : false,
+      dosisNumeroError: (dataEmployeed.dosisNumero === 0 || dataEmployeed.dosisNumero === "") ? true : false,
+      fechaDeVacunacionError: (dataEmployeed.fechaDeVacunacion.length === 0) ? true : false,
+    })
+  };
+  const formValidationForClose = () => {
+    setDataEmployeed({
+      ...dataEmployeed,
+      cedula: "",
+      nombre: "",
+      apellido: "",
+      estadoVacunacion: "",
+      correo: "",
+      fechaNacimiento: "",
+      edad: 0,
+      direccion: "",
+      telefono: "",
+      tipoDeVacuna: "",
+      dosisNumero: 0,
+      fechaDeVacunacion: []
+    })
+
+    setErrorDataEmployeed({
+      ...ErrorDataEmployeed,
+      cedulaError: false,
+      nombreError: false,
+      apellidoError: false,
+      estadoVacunacionError: false,
+      correoError: false,
+      fechaNacimientoError: false,
+      edadError: false,
+      direccionError: false,
+      telefonoError: false,
+      tipoDeVacunaError: false,
+      dosisNumeroError: false,
+      fechaDeVacunacionError: false,
+    })
+  };
+  const newDataEmployeedFrom = () => {
+    setDataEmployeed({
+      ...dataEmployeed,
+      cedula: userEmployeed.cedula,
+      nombre: userEmployeed.nombre,
+      apellido: userEmployeed.apellido,
+      estadoVacunacion: userEmployeed.estadoVacunacion,
+      correo: userEmployeed.correo,
+      fechaNacimiento: userEmployeed.fechaNacimiento,
+      edad: userEmployeed.edad,
+      direccion: userEmployeed.direccion,
+      telefono: userEmployeed.telefono,
+      tipoDeVacuna: userEmployeed.tipoDeVacuna,
+      dosisNumero: userEmployeed.dosisNumero,
+      fechaDeVacunacion: userEmployeed.fechaDeVacunacion,
+    })
+  }
+
+  const passwordGenerate = () => {
+    const minus = "abcdefghijklmnñopqrstuvwxyz";
+    const mayus = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+
+    let contraseña = "";
+    for (let i = 0; i < 8; i++) {
+      let eleccion = Math.floor(Math.random() * 3 + 1);
+      if (eleccion == 1) {
+        let caracter1 = minus.charAt(Math.floor(Math.random() * minus.length));
+        contraseña += caracter1;
+      } else if (eleccion == 2) {
+        const caracter2 = mayus.charAt(Math.floor(Math.random() * mayus.length));
+        contraseña += caracter2;
+      } else {
+        let num = Math.floor(Math.random() * 10);
+        contraseña += num;
+      }
+    }
+    return contraseña;
+  }
+
+  const handleSendData = async () => {
+    formValidation();
+    if (
+      dataEmployeed.cedula !== "" &&
+      dataEmployeed.nombre !== "" &&
+      dataEmployeed.apellido !== "" &&
+      dataEmployeed.estadoVacunacion !== "" &&
+      dataEmployeed.correo !== "" &&
+      dataEmployeed.fechaNacimiento !== "" &&
+      dataEmployeed.edad !== "" &&
+      dataEmployeed.direccion !== "" &&
+      dataEmployeed.telefono !== "" &&
+      dataEmployeed.tipoDeVacuna !== "" &&
+      dataEmployeed.dosisNumero !== "" &&
+      dataEmployeed.fechaDeVacunacion !== ""
+    ) {
+      handleClose()
+      setLoading(true)
+      setOpenControler(true)
+      if (userData.id_rol !== 1 || update !== 0) {
+        setTimeout(() => {
+          setLoading(false)
+          dispatch(setUpdateEmployee(dataEmployeed))
+        }, 200);
+        return
+      }
+    } else if (
+      dataEmployeed.cedula !== "" &&
+      dataEmployeed.nombre !== "" &&
+      dataEmployeed.apellido !== "" &&
+      dataEmployeed.correo !== ""
+    ) {
+      handleClose()
+      setLoading(true)
+      setOpenControler(true)
+      const password = passwordGenerate()
       setTimeout(() => {
-        dispatch(setUpdateEmployee(dataEmployeed))
-
-      }, 100)
-      return
+        const emp = {
+          ...dataEmployeed, password
+        }
+        setLoading(false)
+        dispatch(setAddEmployee(emp))
+        setDataEmployeed(emp)
+      }, 2000);
     }
-    handleCardError(true)
-  };
-
-  const handleUpdateDataEmployeed = () => {
-
-    let dataEmployeed = {
-      cedula: cedula,
-      nombre: nombre,
-      apellido: apellido,
-      estadoVacunacion: estadoVacunacion,
-      correo: correo,
-      fechaNacimiento: fechaNacimiento,
-      edad: edad,
-      direccion: direccion,
-      telefono: telefono,
-      tipoDeVacuna: tipoDeVacuna,
-      dosisNumero: dosisNumero,
-      fechaDeVacunacion: fechaDeVacunacion,
-    }
-
-
-
-    /*  if (userData.id_rol === 1) {
-       setTimeout(() => {
-         dispatch(setUpdateEmployee(dataEmployeed))
- 
-       }, 100)
-       return
-     }
-     handleCardError(true) */
-  };
-
-  const fromValidation = (e) => {
-    e.preventDefaut()
-    setNombreError(false)
-    setApellidoError(false)
-    setEstadoVacunacionError(false)
-    setCorreoError(false)
-    setFechaNacimientoError(false)
-    setEdadError(false)
-    setDireccionError(false)
-    setTelefonoError(false)
-    setTipoDeVacunaError(false)
-    setDosisNumeroError(false)
-    setFechaDeVacunacionError(false)
-
-    if (nombreError === "") setNombreError(true)
-    if (apellidoError === "") setApellidoError(true)
-    if (estadoVacunacionError === "") setEstadoVacunacionError(true)
-    if (correoError === "") setCorreoError(true)
-    if (fechaNacimientoError === "") setFechaNacimientoError(true)
-    if (edadError === "") setEdadError(true)
-    if (direccionError === "") setDireccionError(true)
-    if (telefonoError === "") setTelefonoError(true)
-    if (tipoDeVacunaError === "") setTipoDeVacunaError(true)
-    if (dosisNumeroError === "") setDosisNumeroError(true)
-    if (fechaDeVacunacionError === "") setFechaDeVacunacionError(true)
-
-  };
-
+  }
 
   useEffect(() => {
-    if (userEmployeed.nombre) setNombre(userEmployeed.nombre)
-  }, [userEmployeed.nombre])
+    if (userEmployeed.nombre) newDataEmployeedFrom()
+  }, [userEmployeed])
+  useEffect(() => {
+    if (controler) formValidationForClose()
+  }, [controler])
 
-  /*  useEffect(() => {
-     console.log("hola");
-   }, []) */
 
   return (
     <Dialog
@@ -155,62 +216,88 @@ const EmployeedFrom = ({ open, update, handleClose, userData, handleCardError })
         </Box>
         <DialogTitle sx={{ paddingTop: "0rem", paddingBottom: "0rem" }}>{(update === 1) ? "Actualizacion de Datos" : "Registro De Empleados"}</DialogTitle>
       </div>
-
-      <form noValidate onSubmit={fromValidation}>
+      <form>
         <DialogContent>
           <FromEmpleadoAdmin
+            dataEmployeed={dataEmployeed}
+            setDataEmployeed={setDataEmployeed}
+            ErrorDataEmployeed={ErrorDataEmployeed}
+            formValidation={formValidation}
             update={update}
             userData={userData}
-            userEmployeed={userEmployeed}
-            cedula={cedula}
-            setCedula={setCedula}
-            nombre={nombre}
-            setNombre={setNombre}
-            apellido={apellido}
-            setApellido={setApellido}
-            estadoVacunacion={estadoVacunacion}
-            setEstadoVacunacion={setEstadoVacunacion}
-            correo={correo}
-            setCorreo={setCorreo}
-            fechaNacimiento={fechaNacimiento}
-            setFechaNacimiento={setFechaNacimiento}
-            edad={edad}
-            setEdad={setEdad}
-            direccion={direccion}
-            setDireccion={setDireccion}
-            telefono={telefono}
-            setTelefono={setTelefono}
-            tipoDeVacuna={tipoDeVacuna}
-            setTipoDeVacuna={setTipoDeVacuna}
-            dosisNumero={dosisNumero}
-            setDosisNumero={setDosisNumero}
-            fechaDeVacunacion={fechaDeVacunacion}
-            setFechaDeVacunacion={setFechaDeVacunacion}
-            nombreError={nombreError}
-            apellidoError={apellidoError}
-            estadoVacunacionError={estadoVacunacionError}
-            correoError={correoError}
-            fechaNacimientoError={fechaNacimientoError}
-            edadError={edadError}
-            direccionError={direccionError}
-            telefonoError={telefonoError}
-            tipoDeVacunaError={tipoDeVacunaError}
-            dosisNumeroError={dosisNumeroError}
-            fechaDeVacunacionError={fechaDeVacunacionError}
           />
 
         </DialogContent >
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          {update === 1
-            ? <Button>Registrar</Button>
-            : <Button>Actualizar</Button>
-          }
+          <Button onClick={() => handleSendData()}>{update === 1 ? "Actualizar" : "Registrar"}</Button>
         </DialogActions>
       </form>
+
+      <Dialog
+        open={openControler}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogContent>
+          <Box sx={{ height: 130, width: 350, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+            <Fade
+              in={loading}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                transitionDelay: loading ? '100ms' : '0ms',
+              }}
+              unmountOnExit
+            >
+              <CircularProgress color="success" />
+            </Fade>
+            {(!loading)
+              ? (
+                <div style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  transitionDelay: !loading ? '100ms' : '20ms',
+                }}>
+                  <span style={{ fontWeight: "bold", color: "green", textAlign: "center", paddingBottom: "1rem" }}>Empleado Registrado de Manera Exitosa</span>
+                  <div style={{
+                    display: "flex",
+                    padding: "0.5rem 1rem"
+                  }}>
+                    <section>
+                      <img src='/image/usuario.png' style={{ minWidth: '80px', maxWidth: '80px' }} alt="Banner"></img>
+                    </section>
+                    <section className='dialogLoading'>
+                      <div style={{
+                        display: "flex",
+                        width: "100%",
+                      }} >
+                        <span style={{ fontWeight: "bold", width: "60%" }}>Usuario: </span> <span style={{ fontWeight: "bold", width: "40%" }}>{dataEmployeed.cedula}</span>
+                      </div>
+                      <div style={{
+                        display: "flex",
+                        width: "100%",
+                      }}>
+                        <span style={{ fontWeight: "bold", width: "60%" }}>Contraseña:</span><span style={{ fontWeight: "bold", width: "40%" }}>{dataEmployeed.password}</span>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              )
+              : <></>}
+          </Box>
+        </DialogContent>
+        {(!loading) ? (
+          <DialogActions>
+            <Button onClick={() => setOpenControler(false)}>Aceptar</Button>
+          </DialogActions>
+        )
+          : <></>}
+      </Dialog>
     </Dialog >
+
   );
 }
+
 
 export default EmployeedFrom
 
@@ -218,15 +305,25 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const FromEmpleadoAdmin = (
-  { update, userEmployeed, userData, setCedula, nombre, setNombre, setApellido,
-    estadoVacunacion, setEstadoVacunacion, setCorreo,
-    setFechaNacimiento, setEdad, setDireccion, setTelefono,
-    tipoDeVacuna, setTipoDeVacuna, setDosisNumero, setFechaDeVacunacion, nombreError,
-    apellidoError, estadoVacunacionError, correoError, fechaNacimientoError,
-    edadError, direccionError, telefonoError, tipoDeVacunaError,
-    dosisNumeroError, fechaDeVacunacionError }) => {
 
+
+const FromEmpleadoAdmin = ({ dataEmployeed, setDataEmployeed, ErrorDataEmployeed, formValidation, update, userData }) => {
+
+  function handleCheckCedula(e) {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value.length <= 10) {
+      if (e.target.value === '' || re.test(e.target.value)) {
+        setDataEmployeed({ ...dataEmployeed, cedula: e.target.value })
+      }
+    }
+  }
+  function handleCheckEdad(e) {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setDataEmployeed({ ...dataEmployeed, edad: parseInt(e.target.value) })
+    }
+  }
+  function handleReset() { setDataEmployeed({ ...dataEmployeed, edad: "" }) }
   return (
     <React.Fragment>
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -243,13 +340,17 @@ const FromEmpleadoAdmin = (
                 <TextField
                   id='cedula'
                   label="Cedula"
-                  value={userEmployeed.cedula || ''}
+                  value={dataEmployeed.cedula}
                   sx={{ width: "11rem" }}
                   InputProps={{
                     className: "textFileCardEmpleado",
                     'readOnly': (userData.id_rol === 1) ? false : true,
                   }}
-                  onChange={(e) => setCedula(e.target.value)}
+                  onChange={(e) => {
+                    handleCheckCedula(e)
+                    { (userData.id_rol === 1) ? formValidation() : <></> }
+                  }}
+                  error={ErrorDataEmployeed.cedulaError}
                 />
               </div>
               {
@@ -257,17 +358,20 @@ const FromEmpleadoAdmin = (
                   ? (<div style={{
                     paddingLeft: "1rem", width: "100%", display: "flex", justifyContent: "right"
                   }}>
-                    <FormControl sx={{ minWidth: 120 }}>
+                    <FormControl sx={{ minWidth: 120 }} error={ErrorDataEmployeed.estadoVacunacionError}>
                       <InputLabel id="demo-simple-select-standard-label">Estado</InputLabel>
                       <Select
                         id='estado'
                         labelId="demo-simple-select-standard-label"
-                        value={estadoVacunacion}
+                        value={dataEmployeed.estadoVacunacion}
                         label="Estado"
                         sx={{ width: "8.5rem" }}
                         className="textFileCardEmpleado"
-                        onChange={(e) => setEstadoVacunacion(e.target.value)}
-                        error={estadoVacunacionError}
+                        onChange={(e) => {
+                          setDataEmployeed({ ...dataEmployeed, estadoVacunacion: e.target.value })
+                          formValidation()
+                        }}
+
                       >
                         <MenuItem value="No Vacunado">No Vacunado</MenuItem>
                         <MenuItem value="Vacunado">Vacunado</MenuItem>
@@ -293,26 +397,32 @@ const FromEmpleadoAdmin = (
                 <TextField
                   id='nombres'
                   label="Nombres"
-                  value={nombre}
+                  value={dataEmployeed.nombre}
                   InputProps={{
                     className: "textFileCardEmpleado",
                     readOnly: false,
                   }}
-                  onChange={(e) => setNombre(e.target.value)}
-                  error={nombreError}
+                  onChange={(e) => {
+                    setDataEmployeed({ ...dataEmployeed, nombre: e.target.value })
+                    { (userData.id_rol === 1) ? formValidation() : <></> }
+                  }}
+                  error={ErrorDataEmployeed.nombreError}
                 />
               </div>
               <div style={{ paddingLeft: "1rem" }}>
                 <TextField
                   id='apellidos'
                   label="Apellidos"
-                  value={userEmployeed.apellido || ''}
+                  value={dataEmployeed.apellido}
                   InputProps={{
                     className: "textFileCardEmpleado",
                     readOnly: false,
                   }}
-                  onChange={(e) => setApellido(e.target.value)}
-                  error={apellidoError}
+                  onChange={(e) => {
+                    setDataEmployeed({ ...dataEmployeed, apellido: e.target.value })
+                    { (userData.id_rol === 1) ? formValidation() : <></> }
+                  }}
+                  error={ErrorDataEmployeed.apellidoError}
                 />
               </div>
             </div>
@@ -322,14 +432,17 @@ const FromEmpleadoAdmin = (
                 <TextField
                   id='correo'
                   label="Correo"
-                  value={userEmployeed.correo || ''}
+                  value={dataEmployeed.correo}
                   sx={{ 'width': (userData.id_rol !== 1 || update !== 0) ? "12rem" : "auto" }}
                   InputProps={{
                     className: "textFileCardEmpleado",
                     readOnly: false,
                   }}
-                  onChange={(e) => setCorreo(e.target.value)}
-                  error={correoError}
+                  onChange={(e) => {
+                    setDataEmployeed({ ...dataEmployeed, correo: e.target.value })
+                    { (userData.id_rol === 1) ? formValidation() : <></> }
+                  }}
+                  error={ErrorDataEmployeed.correoError}
                 />
               </div>
 
@@ -337,31 +450,38 @@ const FromEmpleadoAdmin = (
                 ? (
                   <section style={{ display: "flex" }}>
                     <div style={{ paddingLeft: "1rem" }}>
-                      <TextField
+                      <DatePicker
                         id='fecha_de_nacimiento'
                         label="Fecha de Nacimiento"
-                        value={userEmployeed.fechaNacimiento || ''}
+                        value={dataEmployeed.fechaNacimiento}
                         sx={{ width: "12rem" }}
                         InputProps={{
                           className: "textFileCardEmpleado",
                           readOnly: false,
                         }}
-                        onChange={(e) => setFechaNacimiento(e.target.value)}
-                        error={fechaNacimientoError}
+                        onChange={(e) => {
+                          setDataEmployeed({ ...dataEmployeed, fechaNacimiento: e.$D + "/" + (e.$M + 1) + "/" + e.$y })
+                          formValidation()
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
                       />
                     </div>
                     <div style={{ paddingLeft: "1rem" }}>
                       <TextField
                         id='edad'
                         label="Edad"
-                        value={userEmployeed.edad || ''}
+                        value={dataEmployeed.edad}
                         sx={{ width: "4rem" }}
                         InputProps={{
                           className: "textFileCardEmpleado",
                           readOnly: false,
                         }}
-                        onChange={(e) => setEdad(e.target.value)}
-                        error={edadError}
+                        onChange={(e) => {
+                          handleCheckEdad(e)
+                          formValidation()
+                        }}
+                        onClick={handleReset}
+                        error={ErrorDataEmployeed.edadError}
                       />
                     </div>
                   </section>
@@ -375,32 +495,40 @@ const FromEmpleadoAdmin = (
           (userData.id_rol !== 1 || update !== 0)
             ? (
               <FromEmpleadoForEmployeed
-                userEmployeed={userEmployeed}
-                setDireccion={setDireccion}
-                setTelefono={setTelefono}
-                tipoDeVacuna={tipoDeVacuna}
-                setTipoDeVacuna={setTipoDeVacuna}
-                setDosisNumero={setDosisNumero}
-                setFechaDeVacunacion={setFechaDeVacunacion}
-                direccionError={direccionError}
-                telefonoError={telefonoError}
-                tipoDeVacunaError={tipoDeVacunaError}
-                dosisNumeroError={dosisNumeroError}
-                fechaDeVacunacionError={fechaDeVacunacionError}
+                dataEmployeed={dataEmployeed}
+                setDataEmployeed={setDataEmployeed}
+                ErrorDataEmployeed={ErrorDataEmployeed}
+                formValidation={formValidation}
               />
             )
             : <></>
         }
+
       </div>
     </React.Fragment>
   )
 }
 
-const FromEmpleadoForEmployeed = (
-  { userEmployeed, setDireccion, setTelefono, tipoDeVacuna,
-    setTipoDeVacuna, setDosisNumero, setFechaDeVacunacion,
-    direccionError, telefonoError, tipoDeVacunaError,
-    dosisNumeroError, fechaDeVacunacionError }) => {
+const FromEmpleadoForEmployeed = ({ dataEmployeed, setDataEmployeed, ErrorDataEmployeed, formValidation }) => {
+
+  const [fecha, setFecha] = useState("")
+
+  function handleCheckPhone(e) {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value.length <= 10) {
+      if (e.target.value === '' || re.test(e.target.value)) {
+        setDataEmployeed({ ...dataEmployeed, telefono: e.target.value })
+      }
+    }
+  }
+
+  function handleCheckDosis(e) {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setDataEmployeed({ ...dataEmployeed, dosisNumero: parseInt(e.target.value) })
+    }
+  }
+  function handleReset() { setDataEmployeed({ ...dataEmployeed, dosisNumero: "" }) }
 
   return (
     <React.Fragment>
@@ -413,12 +541,15 @@ const FromEmpleadoForEmployeed = (
               label="Direccion"
               multiline
               rows={4}
-              value={userEmployeed.direccion || ''}
+              value={dataEmployeed.direccion}
               InputProps={{
                 readOnly: false,
               }}
-              onChange={(e) => setDireccion(e.target.value)}
-              error={direccionError}
+              onChange={(e) => {
+                formValidation()
+                setDataEmployeed({ ...dataEmployeed, direccion: e.target.value })
+              }}
+              error={ErrorDataEmployeed.direccionError}
             />
           </section>
 
@@ -429,101 +560,142 @@ const FromEmpleadoForEmployeed = (
               <TextField
                 id='telefono'
                 label="Telefono"
-                value={userEmployeed.telefono || ''}
+                value={dataEmployeed.telefono}
                 InputProps={{
                   className: "textFileCardEmpleado",
                   readOnly: false,
                 }}
                 variant="standard"
-                onChange={(e) => setTelefono(e.target.value)}
-                error={telefonoError}
+                onChange={(e) => {
+                  formValidation()
+                  handleCheckPhone(e)
+                }}
+                error={ErrorDataEmployeed.telefonoError}
               />
             </div>
-            <div style={{ paddingTop: "1.5rem", display: "flex" }}>
-              <div style={{ paddingRight: "1rem" }}>
-                <FormControl variant="standard" sx={{ minWidth: 120 }}>
-                  <InputLabel id="demo-simple-select-standard-label">Tipo de Vacuna</InputLabel>
-                  <Select
-                    id='tipo_de_vacuna'
-                    labelId="demo-simple-select-standard-label"
-                    value={tipoDeVacuna}
-                    onChange={(e) => setTipoDeVacuna(e.target.value)}
-                    label="Tipo de Vacuna"
-                    sx={{ width: "10rem" }}
-                    className="textFileCardEmpleado"
-                    error={tipoDeVacunaError}
-                  >
-                    {vacunas.map(elementoVacuna => {
-                      return (
-                        <MenuItem value={elementoVacuna.name} key={elementoVacuna.id}>
-                          {elementoVacuna.name}
-                        </MenuItem>
-                      )
-                    })}
-                  </Select>
-                </FormControl>
-              </div>
-              <div >
-                <TextField
-                  id='dosis'
-                  label="Dosis #"
-                  value={userEmployeed.dosisNumero || ''}
-                  InputProps={{
-                    className: "numeroDeVacunas",
-                    readOnly: false,
-                  }}
-                  variant="standard"
-                  onChange={(e) => setDosisNumero(e.target.value)}
-                  error={dosisNumeroError}
-                />
-              </div>
-            </div>
+            {(dataEmployeed.estadoVacunacion === "Vacunado")
+              ? (
+                <div style={{ paddingTop: "1.5rem", display: "flex" }} >
+                  <div style={{ paddingRight: "1rem" }}>
+                    <FormControl variant="standard" sx={{ minWidth: 120 }}>
+                      <InputLabel id="demo-simple-select-standard-label">Tipo de Vacuna</InputLabel>
+                      <Select
+                        id='tipo_de_vacuna'
+                        labelId="demo-simple-select-standard-label"
+                        value={dataEmployeed.tipoDeVacuna}
+                        label="Tipo de Vacuna"
+                        sx={{ width: "10rem" }}
+                        className="textFileCardEmpleado"
+                        error={ErrorDataEmployeed.tipoDeVacunaError}
+                        onChange={(e) => {
+                          formValidation()
+                          setDataEmployeed({ ...dataEmployeed, tipoDeVacuna: e.target.value })
+                        }}
+                      >
+                        {vacunas.map(elementoVacuna => {
+
+                          return (
+                            <MenuItem value={elementoVacuna.name} key={elementoVacuna.id}>
+                              {elementoVacuna.name}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div >
+                    <TextField
+                      id='dosis'
+                      label="Dosis #"
+                      value={dataEmployeed.dosisNumero}
+                      InputProps={{
+                        className: "numeroDeVacunas",
+                        readOnly: false,
+                      }}
+                      variant="standard"
+                      onChange={(e) => {
+                        formValidation()
+                        handleCheckDosis(e)
+                      }}
+                      onClick={() => {
+                        handleReset()
+                      }}
+                    />
+                  </div>
+                </div>
+              )
+              : <></>}
           </section>
 
           <Divider orientation="vertical" flexItem />
+          {(dataEmployeed.dosisNumero !== 0)
+            ? (
+              <section className='cardDownTwoSection'>
+                <div>
+                  <DatePicker
+                    id='fecha_de_vacunacion'
+                    label="F. Vacunacion"
+                    value={fecha}
+                    sx={{ width: "6rem" }}
+                    InputProps={{
+                      className: "textFileCardEmpleado",
+                      readOnly: false,
+                    }}
+                    onChange={(e) => {
+                      let newFecha = e.$D + "/" + (e.$M + 1) + "/" + e.$y
+                      setFecha(newFecha)
+                    }}
+                    renderInput={(params) =>
+                      <FechaComponent
+                        params={params}
+                        dataEmployeed={dataEmployeed}
+                        setDataEmployeed={setDataEmployeed}
+                      />}
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {dataEmployeed.fechaDeVacunacion.length !== 0
+                    ? (
+                      dataEmployeed.fechaDeVacunacion.map((fechas, index) => <span key={index} style={{ borderBottom: "inset" }}>{fechas}</span>)
+                    )
+                    : <></>
+                  }
+                </div>
+              </section>
+            )
+            : <></>}
 
-          <section className='cardDownTwoSection'>
-            <div><span>Fechas de Vacunacion</span></div>
-            {/* <div style={{ paddingTop: "0.5rem" }}>
-              <TextField
-                id='fecha_de_vacunacion'
-                defaultValue="10-7-2021"
-                sx={{ width: "6rem" }}
-                InputProps={{
-                  className: "textFileCardEmpleado",
-                  readOnly: true,
-                }}
-                variant="standard"
-              />
-            </div>
-            <div style={{ paddingTop: "0.5rem" }}>
-              <TextField
-                id='fecha_de_vacunacion'
-                defaultValue="10-7-2021"
-                sx={{ width: "6rem" }}
-                InputProps={{
-                  className: "textFileCardEmpleado",
-                  readOnly: true,
-                }}
-                variant="standard"
-              />
-            </div>
-            <div style={{ paddingTop: "0.5rem" }}>
-              <TextField
-                id='fecha_de_vacunacion'
-                defaultValue="10-7-2021"
-                sx={{ width: "6rem" }}
-                InputProps={{
-                  className: "textFileCardEmpleado",
-                  readOnly: true,
-                }}
-                variant="standard"
-              />
-            </div> */}
-          </section>
         </div>
       </section>
 
-    </React.Fragment>
+    </React.Fragment >
+  )
+}
+
+const FechaComponent = ({ params, dataEmployeed, setDataEmployeed }) => {
+
+  const setFechaVacunacion = (newFecha) => {
+    let newValue = ((dataEmployeed.fechaDeVacunacion.length === 0) ? [] : dataEmployeed.fechaDeVacunacion);
+    newValue.push(newFecha.inputProps.value)
+    setDataEmployeed({ ...dataEmployeed, fechaDeVacunacion: newValue })
+  }
+  return (
+    <div style={{ display: "flex" }}>
+      <div style={{ width: "84%" }}>
+        <TextField {...params} />
+      </div>
+      <div style={{ width: "15%" }}>
+        <Button
+          disabled={
+            (dataEmployeed.fechaDeVacunacion.length >= parseInt(dataEmployeed.dosisNumero)
+              || dataEmployeed.dosisNumero === ""
+              || params.error
+            ) ? true : false}
+          sx={{ minWidth: "40px" }}
+          onClick={() => setFechaVacunacion(params)} >
+          <Add />
+        </Button>
+      </div>
+    </div>
   )
 }
