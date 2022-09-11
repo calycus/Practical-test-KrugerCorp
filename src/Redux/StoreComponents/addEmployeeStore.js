@@ -5,7 +5,7 @@ export const getInfo = createSlice({
     name: 'employee',
     initialState: {
         data: JSON.parse(localStorage.getItem("Employees") || "[]"),
-        dataDataEmployee: {
+        updateDataEmployee: {
             cedula: "",
             nombre: "",
             apellido: "",
@@ -18,14 +18,30 @@ export const getInfo = createSlice({
             tipoDeVacuna: "",
             dosisNumero: 0,
             fechaDeVacunacion: "",
-            password:""
+            password: "",
+            id: 2
+        },
+        dataEmpleado: {
+            cedula: "",
+            nombre: "",
+            apellido: "",
+            estadoVacunacion: "",
+            correo: "",
+            fechaNacimiento: "",
+            edad: 0,
+            direccion: "",
+            telefono: "",
+            tipoDeVacuna: "",
+            dosisNumero: 0,
+            fechaDeVacunacion: "",
+            password: "",
+            id: 2
         }
     },
 
     reducers: {
         setAddEmployee: (state, action) => {
-            console.log(action.payload);
-           /*  let empleados = localStorage.getItem('Employees') || ""
+            let empleados = localStorage.getItem('Employees') || ""
             if (empleados === "") {
                 localStorage.setItem('Employees', '[]')
                 empleados = '[]'
@@ -34,7 +50,7 @@ export const getInfo = createSlice({
 
             empleadosArray.push(action.payload)
             state.data = empleadosArray
-            localStorage.setItem('Employees', JSON.stringify(empleadosArray)) */
+            localStorage.setItem('Employees', JSON.stringify(empleadosArray))
         },
 
         setUpdateEmployee: (state, action) => {
@@ -42,7 +58,7 @@ export const getInfo = createSlice({
 
             let updateEmpleado = action.payload
 
-            empleados.map(empleado => {
+            empleados.forEach(empleado => {
                 if (empleado.cedula === updateEmpleado.cedula) {
                     empleado.nombre = updateEmpleado.nombre
                     empleado.apellido = updateEmpleado.apellido
@@ -62,10 +78,38 @@ export const getInfo = createSlice({
             localStorage.setItem('Employees', JSON.stringify(empleados))
         },
 
-        setDataEmployee: (state, action) => {
-            /* state.dataDataEmployee = [] */
+        setDeleteEmployee: (state, action) => {
+            let empleados = JSON.parse(localStorage.getItem('Employees'))
 
-            state.dataDataEmployee = action.payload
+            let cedula = action.payload
+
+            empleados.forEach(empleado => {
+                if (empleado.cedula === cedula) {
+
+                    empleados = empleados.filter(data => data.cedula !== cedula)
+                }
+            });
+            state.data = empleados
+            localStorage.setItem('Employees', '[]')
+            localStorage.setItem('Employees', JSON.stringify(empleados))
+        },
+
+        setUpdateForEmployee: (state, action) => {
+            let empleados = JSON.parse(localStorage.getItem('Employees'))
+
+            let cedula = action.payload
+
+            empleados.forEach(empleado => {
+                if (empleado.cedula === cedula) {
+                    state.dataEmpleado = empleado
+
+                }
+            });
+        },
+
+        setDataEmployee: (state, action) => {
+
+            state.updateDataEmployee = action.payload
         },
 
     }
@@ -73,7 +117,8 @@ export const getInfo = createSlice({
 
 
 
-export const { setAddEmployee, setUpdateEmployee, setDataEmployee } = getInfo.actions;
+export const { setAddEmployee, setUpdateEmployee, setDeleteEmployee, setUpdateForEmployee, setDataEmployee } = getInfo.actions;
 export const selectEmployee = (state) => state.employee.data;
-export const selectDataEmployee = (state) => state.employee.dataDataEmployee;
+export const selectUpdateDataEmployee = (state) => state.employee.updateDataEmployee;
+export const selectDataEmpleado = (state) => state.employee.dataEmpleado;
 export default getInfo.reducer;

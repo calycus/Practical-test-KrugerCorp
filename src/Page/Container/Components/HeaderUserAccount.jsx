@@ -1,10 +1,17 @@
+import React from "react";
 import { Button, Avatar, Collapse, IconButton } from "@mui/material";
 import { ChevronLeft } from '@mui/icons-material';
-import React from "react";
+import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+
+import { setDeleteLoginData } from "../../../Redux/StoreComponents/login";
+
 const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme, userData }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
     return (
         <React.Fragment>
-            <div style={{ display: "flex", flexDirection: "column", width: "40%", cursor:"pointer"}}>
+            <div style={{ display: "flex", flexDirection: "column", width: "40%", cursor: "pointer" }}>
                 <div className='drawerHeaderContainer'>
                     <div style={{ display: "flex", alignItems: "center" }} onClick={() => setOpenUser(!openUser)}>
                         <div>
@@ -12,12 +19,12 @@ const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme, userData }) 
                         </div>
                         <div className='drawerHeaderUserDataAcount'>
                             <span className='userHeaderAccount'>Kruger Corp.</span>
-                            <span className='userHeaderName'>//. {userData.rol}</span>
+                            <span className='userHeaderName'>{"//. " + userData.rol}</span>
                         </div>
                     </div>
                     <div style={{ display: "flex", justifyContent: "end" }}>
                         <IconButton onClick={() => setOpen(false)}>
-                            <ChevronLeft color="neutral"/>
+                            <ChevronLeft color="neutral" />
                         </IconButton>
                     </div>
                 </div>
@@ -33,6 +40,10 @@ const HeaderUserAccount = ({ setOpenUser, openUser, setOpen, theme, userData }) 
                             className="logoutButton"
                             variant="outlined"
                             color="neutral"
+                            onClick={() => {
+                                navigate('/')
+                                dispatch(setDeleteLoginData())
+                            }}
                         >
                             Cerrar Sesion
                         </Button>

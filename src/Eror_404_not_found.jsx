@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box, Button } from "@mui/material";
 
-import './404_not_found.css'
+import './Eror_404_not_found.css'
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 

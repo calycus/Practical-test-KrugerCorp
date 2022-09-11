@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle,
+  Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle,
   Divider, Fade, FormControl, InputLabel, MenuItem, Select, Slide, TextField
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -8,20 +8,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Add } from '@mui/icons-material';
 
 import { selectVacunas } from '../../../Redux/StoreComponents/storeTipoDeVacunas';
-import { setAddEmployee, setUpdateEmployee, selectDataEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
+import { setAddEmployee, setUpdateEmployee, selectUpdateDataEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
 
 import "./employeedFrom.css"
 let vacunas = [];
 
-const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
+const EmployeedFrom = ({ open, handleClose, update, userData, clearDataControler }) => {
   const dispatch = useDispatch();
   vacunas = useSelector(selectVacunas);
-  const userEmployeed = useSelector(selectDataEmployee);
+  const userEmployeed = useSelector(selectUpdateDataEmployee);
 
   const [openControler, setOpenControler] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [updateControler, setUpdateControler] = useState(false)
   const [dataEmployeed, setDataEmployeed] = useState(
     {
+      id: 2,
       cedula: "",
       nombre: "",
       apellido: "",
@@ -53,7 +55,6 @@ const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
       fechaDeVacunacionError: false,
     }
   )
-
 
   const formValidation = () => {
     let regexEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -133,10 +134,10 @@ const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
     let contraseña = "";
     for (let i = 0; i < 8; i++) {
       let eleccion = Math.floor(Math.random() * 3 + 1);
-      if (eleccion == 1) {
+      if (eleccion === 1) {
         let caracter1 = minus.charAt(Math.floor(Math.random() * minus.length));
         contraseña += caracter1;
-      } else if (eleccion == 2) {
+      } else if (eleccion === 2) {
         const caracter2 = mayus.charAt(Math.floor(Math.random() * mayus.length));
         contraseña += caracter2;
       } else {
@@ -163,6 +164,7 @@ const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
       dataEmployeed.dosisNumero !== "" &&
       dataEmployeed.fechaDeVacunacion !== ""
     ) {
+      setUpdateControler(true)
       handleClose()
       setLoading(true)
       setOpenControler(true)
@@ -179,6 +181,7 @@ const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
       dataEmployeed.apellido !== "" &&
       dataEmployeed.correo !== ""
     ) {
+      setUpdateControler(false)
       handleClose()
       setLoading(true)
       setOpenControler(true)
@@ -190,16 +193,17 @@ const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
         setLoading(false)
         dispatch(setAddEmployee(emp))
         setDataEmployeed(emp)
-      }, 2000);
+      }, 1000);
     }
   }
 
   useEffect(() => {
     if (userEmployeed.nombre) newDataEmployeedFrom()
   }, [userEmployeed])
+
   useEffect(() => {
-    if (controler) formValidationForClose()
-  }, [controler])
+    if (clearDataControler) formValidationForClose()
+  }, [clearDataControler])
 
 
   return (
@@ -239,7 +243,7 @@ const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogContent>
-          <Box sx={{ height: 130, width: 350, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+          <Box sx={{ height: 130, width: 340, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <Fade
               in={loading}
               style={{
@@ -255,32 +259,46 @@ const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
               ? (
                 <div style={{
                   display: "flex",
+                  width: "100%",
                   flexDirection: "column",
                   transitionDelay: !loading ? '100ms' : '20ms',
                 }}>
-                  <span style={{ fontWeight: "bold", color: "green", textAlign: "center", paddingBottom: "1rem" }}>Empleado Registrado de Manera Exitosa</span>
-                  <div style={{
-                    display: "flex",
-                    padding: "0.5rem 1rem"
-                  }}>
-                    <section>
-                      <img src='/image/usuario.png' style={{ minWidth: '80px', maxWidth: '80px' }} alt="Banner"></img>
-                    </section>
-                    <section className='dialogLoading'>
+                  <span style={{ fontWeight: "bold", color: "green", textAlign: "center", paddingBottom: "1rem" }}>
+                    {(updateControler) ? "Datos Actualizados Correctamente" : "Empleado Registrado Exitosamente"}
+                  </span>
+
+                  {(updateControler)
+                    ? (
+                      <section style={{ display: "flex", justifyContent: "center" }}>
+                        <img src='/image/user-add.gif' style={{ minWidth: '80px', maxWidth: '80px' }} alt="Banner"></img>
+                      </section>
+                    )
+                    : (
                       <div style={{
                         display: "flex",
-                        width: "100%",
-                      }} >
-                        <span style={{ fontWeight: "bold", width: "60%" }}>Usuario: </span> <span style={{ fontWeight: "bold", width: "40%" }}>{dataEmployeed.cedula}</span>
-                      </div>
-                      <div style={{
-                        display: "flex",
-                        width: "100%",
+                        padding: "0.5rem 1rem"
                       }}>
-                        <span style={{ fontWeight: "bold", width: "60%" }}>Contraseña:</span><span style={{ fontWeight: "bold", width: "40%" }}>{dataEmployeed.password}</span>
+                        <section>
+                          <img src='/image/usuario.png' style={{ minWidth: '80px', maxWidth: '80px' }} alt="Banner"></img>
+                        </section>
+                        <section className='dialogLoading'>
+                          <div style={{
+                            display: "flex",
+                            width: "100%",
+                          }} >
+                            <span style={{ fontWeight: "bold", width: "55%" }}>Usuario: </span> <span style={{ fontWeight: "bold", width: "40%" }}>{dataEmployeed.cedula}</span>
+                          </div>
+                          <div style={{
+                            display: "flex",
+                            width: "100%",
+                          }}>
+                            <span style={{ fontWeight: "bold", width: "55%" }}>Contraseña:</span><span style={{ fontWeight: "bold", width: "40%" }}>{dataEmployeed.password}</span>
+                          </div>
+                        </section>
                       </div>
-                    </section>
-                  </div>
+                    )
+                  }
+
                 </div>
               )
               : <></>}
@@ -288,7 +306,12 @@ const EmployeedFrom = ({ open, handleClose, update, userData, controler }) => {
         </DialogContent>
         {(!loading) ? (
           <DialogActions>
-            <Button onClick={() => setOpenControler(false)}>Aceptar</Button>
+            <Button onClick={() => {
+              setOpenControler(false)
+              setUpdateControler(false)
+            }}>
+              Aceptar
+            </Button>
           </DialogActions>
         )
           : <></>}
@@ -324,6 +347,7 @@ const FromEmpleadoAdmin = ({ dataEmployeed, setDataEmployeed, ErrorDataEmployeed
     }
   }
   function handleReset() { setDataEmployeed({ ...dataEmployeed, edad: "" }) }
+
   return (
     <React.Fragment>
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -679,6 +703,7 @@ const FechaComponent = ({ params, dataEmployeed, setDataEmployeed }) => {
     newValue.push(newFecha.inputProps.value)
     setDataEmployeed({ ...dataEmployeed, fechaDeVacunacion: newValue })
   }
+  
   return (
     <div style={{ display: "flex" }}>
       <div style={{ width: "84%" }}>

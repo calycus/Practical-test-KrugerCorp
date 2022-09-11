@@ -73,4 +73,8 @@
 .tableGrid {
     width: 100% !important;
     padding-right: 0.5rem !important;
+    float: right;
+    display: flex;
+    align-items: center;
+    word-break:break-all;
 }

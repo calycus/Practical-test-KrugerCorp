@@ -23,6 +23,9 @@ const PageContainer = () => {
     const [open, setOpen] = useState(false);
     const [openUser, setOpenUser] = useState(true);
 
+    useEffect(() => {
+        setOpenUser(false)
+    }, [open]);
 
     useEffect(() => {
         setOpenUser(false)

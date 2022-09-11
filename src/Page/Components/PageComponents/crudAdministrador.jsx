@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, CardContent, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, TextField, Button } from '@mui/material';
-import { Edit } from '@mui/icons-material';
+import { Card, CardContent, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, TextField, Button, IconButton, Switch, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Edit, PersonRemove, FilterList, ManageSearch, Close } from '@mui/icons-material';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 //Dependencias
-import { selectEmployee, setDataEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
+import { selectEmployee, setDataEmployee, setDeleteEmployee } from '../../../Redux/StoreComponents/addEmployeeStore';
 import { selectLoginData } from '../../../Redux/StoreComponents/login';
-import { getDataVacunas } from '../../../Redux/StoreComponents/storeTipoDeVacunas';
+import { getDataVacunas, selectVacunas } from '../../../Redux/StoreComponents/storeTipoDeVacunas';
 import EmployeedFrom from './employeedFrom';
 import "./crudAdministrador.css"
 
@@ -16,24 +18,36 @@ let viewRowsTable = [];
 
 export default function SubjectDataTable() {
     viewRowsTable = useSelector(selectEmployee)
+    const vacunas = useSelector(selectVacunas)
     const userData = useSelector(selectLoginData);
-
     const dispatch = useDispatch();
+
+
+    const [checked, setChecked] = useState(false);
     const [RowsTable, setRows] = useState([])
-    const [Search, setSearch] = useState(false)
     const [open, setOpen] = useState(false);
     const [update, setUpdate] = useState(0);
-    const [fromError, setFromError] = useState(false);
+    const [Search, setSearch] = useState(false)
+    const [filter, setFilter] = useState({
+        estado: "",
+        tipoDeVacuna: "",
+        dataRange: [null, null]
+    })
+
 
     const handleClose = () => {
         setOpen(false);
         setUpdate(0)
     };
+    const handleClearSearch = () => {
+        setFilter({
+            estado: "",
+            tipoDeVacuna: "",
+            dataRange: [null, null]
+        })
+        setSearch(false)
 
-    const handleCardError = (data) => {
-        setFromError(data);
     };
-
 
     const handleDataUpdate = (data) => {
         dispatch(setDataEmployee(data))
@@ -41,51 +55,79 @@ export default function SubjectDataTable() {
         setOpen(true)
     }
 
-    const requestSearch = (searchedVal) => {
-        if (searchedVal.length == 0) {
+    const handleDeleteUser = (data) => {
+        dispatch(setDeleteEmployee(data))
+    }
+
+    const requestSearch = () => {
+        let filteredRows = []
+        console.log(viewRowsTable);
+        if (filter.estado === "" && filter.tipoDeVacuna === "") {
             setSearch(false)
             return
         }
-        const filteredRows = viewRowsTable.filter((row) => {
-            return row.cedula.toLowerCase().includes(searchedVal.toLowerCase());
-        });
+
+        if (filter.estado !== "") {
+            filteredRows = viewRowsTable.filter((row) => {
+                return ((filter.estado === "No Vacunado")
+                    ? (row.estadoVacunacion === filter.estado || row.estadoVacunacion === "")
+                    : (row.estadoVacunacion === filter.estado)
+                )
+            });
+        }
+        if (filter.tipoDeVacuna !== "") {
+            filteredRows = viewRowsTable.filter((row) => {
+                return (row.tipoDeVacuna === filter.tipoDeVacuna)
+            });
+        }
+
         setRows(filteredRows)
         setSearch(true)
-
     };
 
     useEffect(() => {
-        (open === true) ? dispatch(getDataVacunas()) : <></>
+        dispatch(getDataVacunas())
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open]);
+    }, []);
 
     return (
-        <Card className='cardCrudEmpleado'>
-            {
-                (viewRowsTable.length !== 0)
-                    ?
-                    <CustomTable
-                        Search={Search}
-                        requestSearch={requestSearch}
-                        viewRowsTable={viewRowsTable}
-                        RowsTable={RowsTable}
-                        handleDataUpdate={handleDataUpdate}
-                        open={open}
-                        update={update}
-                        handleClose={handleClose}
-                        userData={userData}
-                        handleCardError={handleCardError}
-                    />
-                    :
-                    (<div><span>No Existen Empleados Registrados</span></div>)
-            }
-        </Card>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+            <Card className='cardCrudEmpleado'>
+                {
+                    (viewRowsTable.length !== 0)
+                        ?
+                        <CustomTable
+                            checked={checked}
+                            setChecked={setChecked}
+                            viewRowsTable={viewRowsTable}
+                            RowsTable={RowsTable}
+                            Search={Search}
+                            handleDataUpdate={handleDataUpdate}
+                            handleDeleteUser={handleDeleteUser}
+                            open={open}
+                            update={update}
+                            handleClose={handleClose}
+                            userData={userData}
+
+                            handleClearSearch={handleClearSearch}
+                            requestSearch={requestSearch}
+                            filter={filter}
+                            setFilter={setFilter}
+                            vacunas={vacunas}
+                        />
+                        :
+                        (<div><span>No Existen Empleados Registrados</span></div>)
+                }
+            </Card>
+        </div>
+
     )
 }
 
 const CustomTable = (
-    { Search, requestSearch, viewRowsTable, RowsTable, handleDataUpdate,
-        open, update, handleClose, userData }
+    { checked, setChecked, viewRowsTable, RowsTable, Search, handleDataUpdate, handleDeleteUser,
+        open, update, handleClose, userData,
+        handleClearSearch, requestSearch, filter, setFilter, vacunas, }
 ) => {
     return (
         <CardContent className='cardContentEmpleado'>
@@ -97,14 +139,24 @@ const CustomTable = (
                     >
                         TABLA DE EMPLEADOS
                     </Typography>
-                    <TextField
-                        sx={{ display: 'flex', width: 400 }}
-                        id="standard-basic"
-                        label="Search"
-                        variant="standard"
-                        onChange={(e) => requestSearch(e.target.value)} />
+                    {(checked)
+                        ? (
+                            <CardOpcionFilter
+                                handleClearSearch={handleClearSearch}
+                                requestSearch={requestSearch}
+                                filter={filter}
+                                setFilter={setFilter}
+                                vacunas={vacunas}
+                            />
+                        )
+                        : <></>
+                    }
+                    <IconButton aria-label="update" style={{ padding: " 5px !important" }} size="large" onClick={() => setChecked(!checked)}>
+                        <FilterList sx={{ fontSize: 25 }} style={{"color":(checked ? "blue" : "black")}} />
+                    </IconButton>
+
                 </Box>
-                <Table sx={{ minWidth: 600 }} aria-label="simple table">
+                <Table sx={{ minWidth: 600, maxWidth: 1100 }} aria-label="simple table">
                     <TableHead style={{ display: "flex", paddingTop: "1.5rem" }}>
                         <TableRow
                             style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)' }}>
@@ -126,6 +178,7 @@ const CustomTable = (
                                     key={index}
                                     row={row}
                                     handleDataUpdate={handleDataUpdate}
+                                    handleDeleteUser={handleDeleteUser}
                                 />
                             ))
                             : RowsTable.map((row, index) => (
@@ -133,12 +186,12 @@ const CustomTable = (
                                     key={index}
                                     row={row}
                                     handleDataUpdate={handleDataUpdate}
+                                    handleDeleteUser={handleDeleteUser}
                                 />
                             ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-
             <EmployeedFrom
                 open={open}
                 handleClose={handleClose}
@@ -150,7 +203,7 @@ const CustomTable = (
     )
 }
 
-const Fila = ({ row, handleDataUpdate }) => {
+const Fila = ({ row, handleDataUpdate, handleDeleteUser }) => {
     return (
         <TableRow
             style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', /* alignItems: 'center' */ }}
@@ -164,11 +217,113 @@ const Fila = ({ row, handleDataUpdate }) => {
             <TableCell className='tableGrid'>N/A</TableCell>
             <TableCell className='tableGrid'>{row.password}</TableCell>
             <TableCell className='tableGrid'>
-                <Button onClick={() => handleDataUpdate(row)}>
-                    <Edit />
-                </Button>
+                <IconButton aria-label="update" style={{ padding: " 5px !important" }} size="large" onClick={() => handleDataUpdate(row)}>
+                    <Edit fontSize="small" />
+                </IconButton>
+                <IconButton aria-label="delete" style={{ padding: " 5px !important" }} size="large" onClick={() => handleDeleteUser(row.cedula)}>
+                    <PersonRemove fontSize="small" />
+                </IconButton>
             </TableCell>
         </TableRow>
+    )
+}
+
+const CardOpcionFilter = ({ handleClearSearch, requestSearch, filter, setFilter, vacunas }) => {
+    const [startDate, endDate] = filter.dataRange;
+
+    return (
+        <React.Fragment>
+            <div style={{ display: "flex" }}>
+                <section style={{ display: "flex" }}>
+                    <div style={{ paddingRight: "1rem" }}>
+                        <FormControl variant="standard" sx={{ minWidth: 120 }}>
+                            <InputLabel id="demo-simple-select-standard-label">Estado de Vacunacion</InputLabel>
+                            <Select
+                                id='estado_de_vacuna'
+                                labelId="demo-simple-select-standard-label"
+                                value={filter.estado}
+                                label="Estado De Vacunacion"
+                                sx={{ width: "12rem", height: "3rem" }}
+                                className="textFileCardEmpleado"
+                                onChange={(e) => { setFilter({ ...filter, estado: e.target.value }) }}
+                            >
+                                <MenuItem value="Vacunado">Vacunado</MenuItem>
+                                <MenuItem value="No Vacunado">No Vacunado</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                    <div>
+                        <FormControl variant="standard" sx={{ minWidth: 120 }} disabled={(filter.estado === "" || filter.estado === "No Vacunado") ? true : false}>
+                            <InputLabel id="demo-simple-select-standard-label">Tipo de Vacuna</InputLabel>
+                            <Select
+                                id='tipo_vacuna'
+                                labelId="demo-simple-select-standard-label"
+                                value={filter.tipoDeVacuna}
+                                label="Tipo de Vacuna"
+                                sx={{ width: "10rem", height: "3rem" }}
+                                className="textFileCardEmpleado"
+                                onChange={(e) => { setFilter({ ...filter, tipoDeVacuna: e.target.value }) }}
+                            >
+                                {vacunas.map(elementoVacuna => {
+
+                                    return (
+                                        <MenuItem value={elementoVacuna.name} key={elementoVacuna.id}>
+                                            {elementoVacuna.name}
+                                        </MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+                    </div>
+                </section>
+                <section>
+                    {/*  <div style={{width:"12rem"}}>
+                    <DatePicker
+                        selectsRange={true}
+                        startDate={startDate}
+                        endDate={endDate}
+                        onChange={(e) => {
+                            console.log(startDate);
+                            setFilter({ ...filter, dataRange: e })
+                        }}
+                        isClearable={true}
+                    />
+                </div> */}
+                    {/* <div style={{ paddingRight: "1rem" }}>
+                    <DatePicker
+                        label="Fecha Desde"
+                        value={filter.rangoFechaDesde}
+                        onChange={(e) => {
+                            let fecha = (e.$D + "/" + (e.$M + 1) + "/" + e.$y)
+                            setFilter({ ...filter, rangoFechaDesde: fecha });
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                    />
+                </div>
+                <div style={{ paddingRight: "1rem" }}>
+                    <DatePicker
+                        label="Fecha Desde"
+                        value={filter.rangoFechaHasta}
+                        onChange={(e) => {
+                            let fecha = (e.$D + "/" + (e.$M + 1) + "/" + e.$y)
+                            setFilter({ ...filter, rangoFechaHasta: fecha });
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                    />
+                </div> */}
+                </section>
+                <div style={{ display: "flex" }}>
+                    <IconButton aria-label="update" style={{ padding: " 5px !important" }} size="large" onClick={() => requestSearch()}>
+                        <ManageSearch sx={{ fontSize: 25 }} />
+                    </IconButton>
+                    {(filter.estado !== "" || filter.tipoDeVacuna !== "") ? (
+                        <IconButton aria-label="update" style={{ padding: " 5px !important" }} size="large" onClick={() => handleClearSearch()}>
+                            <Close sx={{ fontSize: 25 }} />
+                        </IconButton>
+                    ) : <></>}
+                </div>
+            </div>
+        </React.Fragment>
     )
 }
 

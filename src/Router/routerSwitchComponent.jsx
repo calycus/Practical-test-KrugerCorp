@@ -1,7 +1,7 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import HomePage from '../Page/Home/homePage'
 import Index from '../Page/Components/app';
-import Error_404_Not_Found from '../404_not_found';
+import Error_404_Not_Found from '../Eror_404_not_found';
 
 const RotuerSwitchComponent = () => {
 

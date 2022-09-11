@@ -4,7 +4,6 @@ import { Box } from '@mui/material';
 import './homePage.css';
 /* import CardRolOption from './Components/CardRolOption'; */
 import Login from './Components/Login';
-const roles = [{ rol: "Administador", id: 1 }, { rol: "Empleado", id: 2 }]
 
 
 const HomePage = () => {

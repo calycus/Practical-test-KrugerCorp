@@ -1,17 +1,13 @@
 import { Button, Box, CardActions, TextField } from '@mui/material';
 import * as React from 'react';
 import { useState } from 'react';
-import { useTheme } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom'
 import { getDataUserLogin } from '../../../Redux/StoreComponents/login';
 import "./Login.css"
 
 
 const Login = () => {
-    const theme = useTheme()
     const dispatch = useDispatch();
-    const history = useNavigate();
 
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
@@ -43,7 +39,7 @@ const Login = () => {
                     />
                 </div>
                 <CardActions sx={{ paddingTop: "2rem" }}>
-                    <Button onClick={() => getData(userName, password, dispatch)}
+                    <Button onClick={() => dispatch(getDataUserLogin(userName, password))}
                         variant="outlined"
                         color="logo"
                         sx={{ fontWeight: "bolder" }}
@@ -58,7 +54,4 @@ const Login = () => {
 
 export default Login
 
-const getData = (userName, password, dispatch) => {
-    dispatch(getDataUserLogin(userName, password))
-}
 
