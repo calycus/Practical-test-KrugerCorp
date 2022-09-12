@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Provider } from 'react-redux';
 
 
-import PageContainer from './Page/Container/pageContainer';
+import PageContainer from './Page/Container/PageContainer';
 import store from './Redux/store'
 import './index.css';
 
