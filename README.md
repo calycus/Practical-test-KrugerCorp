@@ -1,9 +1,23 @@
-# Getting Started with Create React App
+# Practical test Krueger Corp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This technical test was developed following the instructions provided by the company.
+
+## Technical Data
+
+Kruger Corporation requires an application to keep track of employee vaccination status inventory.\
+The application will have 2 roles: \
+\
+Administrator.\
+\
+Employee.
 
 ## Available Scripts
 
+Before being able to execute the project, it is necessary to install the dependencies required for the correct operation.
+
+### `npm install` & `npm update`
+
+After installing the required dependencies you can start running the project.
 In the project directory, you can run:
 
 ### `npm start`
@@ -13,6 +27,11 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+## 
+![image](https://drive.google.com/file/d/1Z6kKKguwxuLdLi6qRGNQY0b58H0GJGBi/view?usp=)
+
+
 
 ### `npm test`
 
