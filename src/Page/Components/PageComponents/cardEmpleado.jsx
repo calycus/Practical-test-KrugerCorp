@@ -248,44 +248,23 @@ const CardEmpleado = () => {
 
                         <Divider orientation="vertical" flexItem />
 
-                        <section className='cardDownTwoSection'>
-                            <div><span>Fechas de Vacunacion</span></div>
-                            {/* <div style={{ paddingTop: "0.5rem" }}>
-                            <TextField
-                                id='fecha_de_vacunacion'
-                                value="10-7-2021"
-                                sx={{ width: "6rem" }}
-                                InputProps={{
-                                    className: "textFileCardEmpleado",
-                                    readOnly: true,
-                                }}
-                                variant="standard"
-                            />
-                        </div>
-                        <div style={{ paddingTop: "0.5rem" }}>
-                            <TextField
-                                id='fecha_de_vacunacion'
-                                value="10-7-2021"
-                                sx={{ width: "6rem" }}
-                                InputProps={{
-                                    className: "textFileCardEmpleado",
-                                    readOnly: true,
-                                }}
-                                variant="standard"
-                            />
-                        </div>
-                        <div style={{ paddingTop: "0.5rem" }}>
-                            <TextField
-                                id='fecha_de_vacunacion'
-                                value="10-7-2021"
-                                sx={{ width: "6rem" }}
-                                InputProps={{
-                                    className: "textFileCardEmpleado",
-                                    readOnly: true,
-                                }}
-                                variant="standard"
-                            />
-                        </div> */}
+                        <section className='cardDownTwoSectionFechas'>
+                            <div style={{ paddingBottom: "0.2rem" }}><span>Fechas de Vacunacion</span></div>
+                            <div className='cardDownTwoSection' style={{height:"100%"}}>
+                                {(dataUser.fechaDeVacunacion.length !== 0)
+                                    ? (
+                                        dataUser.fechaDeVacunacion.map((fecha, index) => {
+                                            return (
+                                                <span style={{ paddingBottom: "0.2rem" }} key={index}>
+                                                    {fecha}
+                                                </span>
+                                            )
+
+                                        })
+
+                                    )
+                                    : <></>}
+                            </div>
                         </section>
                     </div>
                 </CardContent>

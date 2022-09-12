@@ -149,32 +149,45 @@ const EmployeedFrom = ({ open, handleClose, update, userData, clearDataControler
   }
 
   const handleSendData = async () => {
+    console.log(userEmployeed);
     formValidation();
-    if (
-      dataEmployeed.cedula !== "" &&
-      dataEmployeed.nombre !== "" &&
-      dataEmployeed.apellido !== "" &&
-      dataEmployeed.estadoVacunacion !== "" &&
-      dataEmployeed.correo !== "" &&
-      dataEmployeed.fechaNacimiento !== "" &&
-      dataEmployeed.edad !== "" &&
-      dataEmployeed.direccion !== "" &&
-      dataEmployeed.telefono !== "" &&
-      dataEmployeed.tipoDeVacuna !== "" &&
-      dataEmployeed.dosisNumero !== "" &&
-      dataEmployeed.fechaDeVacunacion !== ""
-    ) {
-      setUpdateControler(true)
-      handleClose()
-      setLoading(true)
-      setOpenControler(true)
-      if (userData.id_rol !== 1 || update !== 0) {
+    if (userData.id_rol === 2) {
+      if (
+        dataEmployeed.cedula !== "" &&
+        dataEmployeed.nombre !== "" &&
+        dataEmployeed.apellido !== "" &&
+        dataEmployeed.estadoVacunacion !== "" &&
+        dataEmployeed.correo !== "" &&
+        dataEmployeed.fechaNacimiento !== "" &&
+        dataEmployeed.edad !== "" &&
+        dataEmployeed.direccion !== "" &&
+        dataEmployeed.telefono !== "" &&
+        dataEmployeed.tipoDeVacuna !== "" &&
+        dataEmployeed.dosisNumero !== "" &&
+        dataEmployeed.fechaDeVacunacion !== ""
+      ) {
+        setUpdateControler(true)
+        handleClose()
+        setLoading(true)
+        setOpenControler(true)
         setTimeout(() => {
           setLoading(false)
           dispatch(setUpdateEmployee(dataEmployeed))
         }, 200);
         return
       }
+
+    } else if (update === 1) {
+      setUpdateControler(true)
+      handleClose()
+      setLoading(true)
+      setOpenControler(true)
+      setTimeout(() => {
+        setLoading(false)
+        dispatch(setUpdateEmployee(dataEmployeed))
+      }, 200);
+      return
+
     } else if (
       dataEmployeed.cedula !== "" &&
       dataEmployeed.nombre !== "" &&
@@ -703,7 +716,7 @@ const FechaComponent = ({ params, dataEmployeed, setDataEmployeed }) => {
     newValue.push(newFecha.inputProps.value)
     setDataEmployeed({ ...dataEmployeed, fechaDeVacunacion: newValue })
   }
-  
+
   return (
     <div style={{ display: "flex" }}>
       <div style={{ width: "84%" }}>

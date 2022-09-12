@@ -39,6 +39,7 @@ export default function SubjectDataTable() {
         setOpen(false);
         setUpdate(0)
     };
+
     const handleClearSearch = () => {
         setFilter({
             estado: "",
@@ -152,7 +153,7 @@ const CustomTable = (
                         : <></>
                     }
                     <IconButton aria-label="update" style={{ padding: " 5px !important" }} size="large" onClick={() => setChecked(!checked)}>
-                        <FilterList sx={{ fontSize: 25 }} style={{"color":(checked ? "blue" : "black")}} />
+                        <FilterList sx={{ fontSize: 25 }} style={{ "color": (checked ? "blue" : "black") }} />
                     </IconButton>
 
                 </Box>
@@ -214,7 +215,13 @@ const Fila = ({ row, handleDataUpdate, handleDeleteUser }) => {
             <TableCell className='tableGrid'>{row.correo}</TableCell>
             <TableCell className='tableGrid'>{(row.estadoVacunacion === "") ? "N/A" : row.estadoVacunacion}</TableCell>
             <TableCell className='tableGrid'>{(row.tipoDeVacuna === "") ? "N/A" : row.tipoDeVacuna}</TableCell>
-            <TableCell className='tableGrid'>N/A</TableCell>
+            <TableCell className='tableGrid' sx={{ display: "flex !important", flexDirection: "column !important", padding: "0.4rem 0.6rem !important" }}>
+                {
+                    (row.fechaDeVacunacion.length === 0)
+                        ? "N/A"
+                        : (row.fechaDeVacunacion.map((fechas, index) => <span key={index} style={{ paddingBottom: "0.1rem" }}>{fechas}</span>))
+                }
+            </TableCell>
             <TableCell className='tableGrid'>{row.password}</TableCell>
             <TableCell className='tableGrid'>
                 <IconButton aria-label="update" style={{ padding: " 5px !important" }} size="large" onClick={() => handleDataUpdate(row)}>

@@ -47,7 +47,7 @@ export const getInfo = createSlice({
                 empleados = '[]'
             }
             let empleadosArray = JSON.parse(empleados)
-
+            
             empleadosArray.push(action.payload)
             state.data = empleadosArray
             localStorage.setItem('Employees', JSON.stringify(empleadosArray))
