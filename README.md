@@ -11,7 +11,58 @@ Administrator.\
 \
 Employee.
 
-## Available Scripts
+## Role access control
+By default the project uses a JSON file which contains the initial access credentials which for easy handling are instantiated as:\
+\
+user:     admin\
+password: admin\
+\
+![Screenshot_9](https://user-images.githubusercontent.com/46092860/189565026-a2886731-7645-4396-9f21-39b856af220f.png) \
+\
+\
+For the registration and control of employee data, it was decided to use localStorage as a replacement for the backend.\
+\
+Using the store as an intermediary for better data management and better connection.\
+\
+\
+## The administrator role can perform the following actions:
+\
+Register\
+Edit\
+List and delete Employees\
+\
+\
+Criteria of acceptance:\
+a. Record the following employee information.\
+    ○ Certificate.\
+    ○ Names.\
+    ○ Surnames.\
+    ○ Email.\
+\
+b. The fields must contain validations according to the data type:\
+    ○ All fields are required.\
+    ○ Valid ID. (Include a unique 10-digit numeric value)\
+    ○ Valid email.\
+    ○ Names and surnames must not contain numbers or special characters.\
+\
+c. When registering an employee, a username and password must be generated for the employee.\
+
+
+## As an employee it is required to enter the system to view and update my information
+\
+a. Complete the following information:\
+  ● Date of birth.\
+  ● Home address.\
+  ● Mobile phone.\
+  ● Vaccination status: Vaccinated / Not Vaccinated.\
+  ● If the employee is in vaccinated status, the following information should be requested
+
+required:\
+  ○ Type of vaccine: Sputnik, AstraZeneca, Pfizer and Jhonson&Jhonson\
+  ○ Date of vaccination.\
+  ○ Number of doses.\
+  
+  ## Available Scripts
 
 Before being able to execute the project, it is necessary to install the dependencies required for the correct operation.
 
@@ -27,11 +78,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
-
-## 
-![image](https://drive.google.com/file/d/1Z6kKKguwxuLdLi6qRGNQY0b58H0GJGBi/view?usp=)
-
-
 
 ### `npm test`
 
