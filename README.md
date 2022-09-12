@@ -24,6 +24,8 @@ For the registration and control of employee data, it was decided to use localSt
 \
 Using the store as an intermediary for better data management and better connection.\
 \
+![Screenshot_10](https://user-images.githubusercontent.com/46092860/189568543-b186d35b-6ac3-43ab-975f-598b2b09d297.png) \
+\
 \
 ## The administrator role can perform the following actions:
 \
